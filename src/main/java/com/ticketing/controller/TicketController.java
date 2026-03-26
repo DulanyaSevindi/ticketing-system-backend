@@ -1,9 +1,11 @@
 package com.ticketing.controller;
 
+import com.ticketing.dto.TicketFilterDTO;
 import com.ticketing.dto.TicketRequestDTO;
 import com.ticketing.dto.TicketStatusDTO;
 import com.ticketing.entity.Ticket;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.ticketing.service.TicketService;
@@ -27,6 +29,19 @@ public class TicketController {
     @GetMapping
     public ResponseEntity<List<Ticket>> getAllTickets() {
         return ResponseEntity.ok(ticketService.getAllTickets());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<Ticket>> getTickets(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
+            TicketFilterDTO filter
+    ) {
+        return ResponseEntity.ok(
+                ticketService.getTickets(page, size, sortBy, sortDir, filter)
+        );
     }
 
     //get user by id

@@ -2,17 +2,25 @@ package com.ticketing.service;
 
 import com.ticketing.Enums.Priority;
 import com.ticketing.Enums.TicketStatus;
+import com.ticketing.dto.TicketFilterDTO;
 import com.ticketing.dto.TicketRequestDTO;
 import com.ticketing.dto.TicketStatusDTO;
 import com.ticketing.entity.Ticket;
 import com.ticketing.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.ticketing.repository.TicketRepository;
 import com.ticketing.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.ticketing.specification.TicketSpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +29,29 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
 
+    //GET THE  PAGINATION,SEARCH,FILTER
+    public Page<Ticket> getTickets(
+            int page,
+            int size,
+            String sortBy,
+            String sortDir,
+            TicketFilterDTO filter
+    ) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Specification<Ticket> spec = Specification
+                .where(hasTitle(filter.getTitle()))
+                .and(hasStatus(filter.getStatus()))
+                .and(hasPriority(filter.getPriority()))
+                .and(hasAssignedTo(filter.getAssignedToId()));
+
+        return ticketRepository.findAll(spec, pageable);
+    }
 
     //create
     public Ticket createTicket(TicketRequestDTO dto) {
@@ -43,7 +74,7 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
-    //getall
+    //get all
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();
     }
@@ -54,7 +85,7 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
     }
 
-    //update
+    //update the tickets
     public Ticket updateTicket(Long id,TicketRequestDTO dto){
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
@@ -85,6 +116,7 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    //update the status
     public Ticket updateStatus(Long id, TicketStatusDTO dto) {
 
         Ticket ticket = ticketRepository.findById(id)
