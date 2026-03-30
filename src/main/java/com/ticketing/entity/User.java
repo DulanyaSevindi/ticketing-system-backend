@@ -1,27 +1,29 @@
 package com.ticketing.entity;
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import com.ticketing.Enums.Role;
-
-
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Data
 @Getter
 @Setter
-@Table(name= "user")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    private Role role; // e.g., "ADMIN", "DEVELOPER"
+
     private String email;
 
-  @Enumerated(EnumType.STRING)
-    private Role role;
-
+    private String name;
 }

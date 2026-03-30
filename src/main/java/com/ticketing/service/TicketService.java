@@ -2,9 +2,9 @@ package com.ticketing.service;
 
 import com.ticketing.Enums.Priority;
 import com.ticketing.Enums.TicketStatus;
-import com.ticketing.dto.TicketFilterDTO;
-import com.ticketing.dto.TicketRequestDTO;
-import com.ticketing.dto.TicketStatusDTO;
+import com.ticketing.dto.ticket.TicketFilterDTO;
+import com.ticketing.dto.ticket.TicketRequestDTO;
+import com.ticketing.dto.ticket.TicketStatusDTO;
 import com.ticketing.entity.Ticket;
 import com.ticketing.entity.User;
 import lombok.RequiredArgsConstructor;

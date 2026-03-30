@@ -1,8 +1,8 @@
 package com.ticketing.controller;
 
-import com.ticketing.dto.TicketFilterDTO;
-import com.ticketing.dto.TicketRequestDTO;
-import com.ticketing.dto.TicketStatusDTO;
+import com.ticketing.dto.ticket.TicketFilterDTO;
+import com.ticketing.dto.ticket.TicketRequestDTO;
+import com.ticketing.dto.ticket.TicketStatusDTO;
 import com.ticketing.entity.Ticket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

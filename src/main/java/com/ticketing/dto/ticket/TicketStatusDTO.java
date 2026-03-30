@@ -1,4 +1,4 @@
-package com.ticketing.dto;
+package com.ticketing.dto.ticket;
 
 import lombok.Data;
 

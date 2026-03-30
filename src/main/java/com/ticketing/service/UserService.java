@@ -1,6 +1,6 @@
 package com.ticketing.service;
 
-import com.ticketing.dto.UserDTO;
+import com.ticketing.dto.user.UserDTO;
 import com.ticketing.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
