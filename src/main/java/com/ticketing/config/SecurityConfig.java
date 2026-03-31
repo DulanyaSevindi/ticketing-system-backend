@@ -30,8 +30,8 @@ public class SecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsPasswordService((UserDetailsService) customUserDetailsService); // <-- cast fixes the error
+        DaoAuthenticationProvider provider =
+                new DaoAuthenticationProvider(customUserDetailsService); // ✅ REQUIRED
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
