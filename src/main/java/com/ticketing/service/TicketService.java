@@ -7,6 +7,7 @@ import com.ticketing.dto.ticket.TicketRequestDTO;
 import com.ticketing.dto.ticket.TicketStatusDTO;
 import com.ticketing.entity.Ticket;
 import com.ticketing.entity.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,7 @@ public class TicketService {
     private final UserRepository userRepository;
 
     //GET THE  PAGINATION,SEARCH,FILTER
+    @Transactional
     public Page<Ticket> getTickets(
             int page,
             int size,
@@ -50,14 +52,19 @@ public class TicketService {
                 .and(hasPriority(filter.getPriority()))
                 .and(hasAssignedTo(filter.getAssignedToId()));
 
-        return ticketRepository.findAll(spec, pageable);
+        return ticketRepository.findByDeletedFalse(spec, pageable);
     }
 
     //create
+    @Transactional
     public Ticket createTicket(TicketRequestDTO dto) {
 
-        User assignedUser = userRepository.findById(dto.getAssignedToId())
-                .orElseThrow();
+        User assignedUser = null;
+        if (dto.getAssignedToId() != null) {
+            assignedUser = userRepository.findById(dto.getAssignedToId())
+                    .orElseThrow(() -> new RuntimeException("Assigned user not found"));
+        }
+
 
         User createdBy = userRepository.findById(dto.getCreatedById())
                 .orElseThrow();
@@ -68,6 +75,8 @@ public class TicketService {
         ticket.setPriority(Priority.valueOf(dto.getPriority()));
         ticket.setStatus(TicketStatus.valueOf(dto.getStatus()));
         ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setUpdatedAt(LocalDateTime.now());
+        ticket.setDeleted(false);
         ticket.setAssignedTo(assignedUser);
         ticket.setCreatedBy(createdBy);
 
@@ -76,7 +85,7 @@ public class TicketService {
 
     //get all
     public List<Ticket> getAllTickets() {
-        return ticketRepository.findAll();
+        return ticketRepository.findAllByDeletedFalse();
     }
 
     // ✅ GET BY ID
@@ -99,8 +108,13 @@ public class TicketService {
 
 
     //delete
+    @Transactional
     public void deleteTicket(Long id){
-        ticketRepository.deleteById(id);
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+
+        ticket.setDeleted(true);
+
     }
 
     //assign ticket

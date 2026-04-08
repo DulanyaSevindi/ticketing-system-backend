@@ -2,5 +2,6 @@ package com.ticketing.Enums;
 
 public enum Role {
      ADMIN,
-     DEVELOPER
+     DEVELOPER,
+     USER
 }

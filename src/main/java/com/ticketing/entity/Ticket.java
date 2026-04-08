@@ -1,11 +1,11 @@
 package com.ticketing.entity;
 
+import com.ticketing.Enums.Priority;
 import com.ticketing.Enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import com.ticketing.Enums.Priority;
 
 import java.time.LocalDateTime;
 
@@ -13,11 +13,14 @@ import java.time.LocalDateTime;
 @Data
 @Getter
 @Setter
-@Table (name = "ticket")
+@Table(name = "ticket")
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private Boolean deleted = false;
 
     private String title;
     private String description;
@@ -29,8 +32,10 @@ public class Ticket {
     private Priority priority;
 
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
+    @JoinColumn(nullable = true)
     private User assignedTo;
 
     @ManyToOne

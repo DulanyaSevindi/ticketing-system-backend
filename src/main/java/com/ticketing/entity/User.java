@@ -21,9 +21,13 @@ public class User {
 
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private Role role; // e.g., "ADMIN", "DEVELOPER"
 
     private String email;
 
     private String name;
+
+    @Column(nullable = false)
+    private Integer loginCount = 0;
 }
