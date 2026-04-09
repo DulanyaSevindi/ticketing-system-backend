@@ -35,11 +35,14 @@ public class Ticket {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(nullable = true)
+    @JoinColumn(name = "assigned_to_id", nullable = true)
     private User assignedTo;
 
     @ManyToOne
     private User createdBy;
+
+    @Column(length = 1000)
+    private String feedback;
 
 
 }

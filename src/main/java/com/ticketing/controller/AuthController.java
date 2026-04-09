@@ -28,15 +28,22 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
         try {
             String token = authService.login(authRequest.getEmail(), authRequest.getPassword());
-            return ResponseEntity.ok(new AuthResponse(token, "Login Successful"));
+
+            User user = authService.getUserByEmail(authRequest.getEmail());
+
+            return ResponseEntity.ok(
+                    new AuthResponse(
+                            "Login Successful",
+                            token,
+                            user.getRole().name(), // ✅ send role
+                            user.getEmail(),
+                            user.getId()
+                    )
+            );
+
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse(null, "Invalid email or password"));
-        } catch (Exception e) {
-            // This will tell you EXACTLY what's failing
-            System.out.println("❌ LOGIN ERROR: " + e.getClass().getName() + ": " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new AuthResponse(null, "Error: " + e.getMessage()));
+                    .body(new AuthResponse("Invalid email or password", null, null, null, null));
         }
     }
 }

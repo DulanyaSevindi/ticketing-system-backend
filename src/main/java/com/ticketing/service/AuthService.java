@@ -55,4 +55,9 @@ public class AuthService {
 
         return jwtUtil.generateToken(userDetails);
     }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
 }

@@ -59,15 +59,19 @@ public class TicketService {
     @Transactional
     public Ticket createTicket(TicketRequestDTO dto) {
 
+        // Ensure createdById is present
+        if (dto.getCreatedById() == null) {
+            throw new RuntimeException("CreatedById cannot be null");
+        }
+        User createdBy = userRepository.findById(dto.getCreatedById())
+                .orElseThrow(() -> new RuntimeException("Creator not found"));
+
+        // Assigned user is optional
         User assignedUser = null;
         if (dto.getAssignedToId() != null) {
             assignedUser = userRepository.findById(dto.getAssignedToId())
                     .orElseThrow(() -> new RuntimeException("Assigned user not found"));
         }
-
-
-        User createdBy = userRepository.findById(dto.getCreatedById())
-                .orElseThrow();
 
         Ticket ticket = new Ticket();
         ticket.setTitle(dto.getTitle());
@@ -98,10 +102,13 @@ public class TicketService {
     public Ticket updateTicket(Long id,TicketRequestDTO dto){
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        User user = userRepository.findById(dto.getAssignedToId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         ticket.setTitle(dto.getTitle());
         ticket.setDescription(dto.getDescription());
         ticket.setPriority(Priority.valueOf(dto.getPriority()));
         ticket.setStatus(TicketStatus.valueOf(dto.getStatus()));
+        ticket.setAssignedTo(user);
 
         return ticketRepository.save(ticket);
     }
@@ -137,6 +144,12 @@ public class TicketService {
                 .orElseThrow(() -> new RuntimeException("Ticket not found"));
 
         ticket.setStatus(TicketStatus.valueOf(dto.getStatus()));
+
+        if (dto.getFeedback() != null) {
+            ticket.setFeedback(dto.getFeedback()); // ✅ save feedback
+        }
+
+        ticket.setUpdatedAt(LocalDateTime.now());
 
         return ticketRepository.save(ticket);
     }

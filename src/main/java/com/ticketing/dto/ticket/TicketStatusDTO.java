@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class TicketStatusDTO {
     private String status;
+    private String feedback;
 }
